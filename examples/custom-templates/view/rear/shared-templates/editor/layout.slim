@@ -1,0 +1,102 @@
+javascript:
+  var assocs = {};
+  var crudifier = new Rear.CRUD(#{item_id}, '#{self[:crud]}', '#{self[:edit]}', #{readonly? ? true : false});
+
+- if readonly?
+  javascript:
+    $(function(){
+      Rear.sticky_warn('ReadOnly Mode! Any updates will be ignored!')
+    });
+
+.row-fluid
+  .span4
+    #editor-navigation.hide_under_940px
+    javascript:
+      $(function(){
+        $.ajax({type: 'PUT',
+          url: '#{{route pager_params.merge(:selected => item_id.to_s)}}'
+        }).done(function(response){ $('#editor-navigation').html(response) });
+      });
+
+  .span8
+
+    form.form-horizontal#editor-main_form
+      ul.nav.nav-tabs
+        li.active
+          a href="#editor-tabs-generic" data-toggle="tab"
+            i.icon-edit
+            | &nbsp;
+            = [__rear__.label, 'Edit', item_id].join(' | ')
+        
+        - belongs_to_assocs.each_key do |a|
+          li
+            a href="#editor-tabs-#{a}" data-toggle="tab"
+              i.icon-tags
+              | &nbsp;
+              = a
+      
+        - if item_id > 0
+          - has_any_assocs.each_key do |a|
+            li
+              a href="#editor-tabs-#{a}" data-toggle="tab"
+                i.icon-tags
+                | &nbsp;
+                = a
+        li
+          a href=route(:edit, 0)
+            span.badge.badge-warning
+              i.icon-plus
+              | &nbsp;New
+
+        - if item_id > 0
+          li
+            a onclick="if(confirm('This action can not be undone! Continue?')) { crudifier.delete('#{{route(pager_params)}}') } else { return false }" href="#"
+              span.badge.badge-important
+                i.icon-remove
+                | &nbsp;Delete
+
+        li
+          a onclick="crudifier.save();" href="javascript:void(null);"
+            span.badge.badge-success#editor-save_badge
+              i.icon-check
+              | &nbsp;Save
+      
+      .tab-content
+        .tab-pane.active#editor-tabs-generic
+
+          - rowed_columns = []
+          - editor_columns.each do |column|
+            - next if rowed_columns.include?(column.__id__)
+            - if column.row?
+              - if column.row.is_a?(String)
+                .row-fluid
+                  .span style="text-align: center;"
+                    h4.muted
+                      = column.row
+                  
+              .row-fluid
+                - columns = editor_columns.select {|c| c.row == column.row}
+                - columns.each do |rc|
+                  - self.column = rc
+                  - rowed_columns << rc.__id__
+                  div class=('span%s' % (12 / columns.size).ceil)
+                    .editor-column_container title=rc.label
+                      .editor-column_value
+                        == render_editor_column rc
+
+            - else
+              - self.column = column
+              .editor-column_container title=column.label
+                .editor-column_value
+                  == render_editor_column column
+
+        == render_belongs_to_assocs
+        == render_has_any_assocs if item_id > 0
+        
+    hr
+    .row-fluid
+      .pull-right
+        a.btn.editor-save_button onclick="crudifier.save();" style="width: 10em;"
+          i.icon-check
+          | &nbsp;Save
+  
