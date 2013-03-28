@@ -1,7 +1,7 @@
 require 'bundler/setup'
 Bundler.require
 
-pattern = File.expand_path('../../models/datamapper/*.rb', __FILE__)
+pattern = File.expand_path('../models/*.rb', __FILE__)
 Dir[pattern].each {|f| require f}
 
 DataMapper.finalize
