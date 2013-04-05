@@ -1,0 +1,22 @@
+.pagination.pagination-centered class=('pagination-small' unless get?)
+  ul
+    - if action_name == :quickview
+      li
+        a href=route(pager_params)
+          i.icon-list
+
+    - if page_min > 1
+      li
+        == pager_linker(1)
+      li.disabled
+        a ...
+
+    - page_min.upto(page_max) do |p|
+      li class=('active' if p == current_page)
+        == pager_linker(p)
+
+    - if page_max < total_pages
+      li.disabled
+        a ...
+      li
+        == pager_linker(total_pages)

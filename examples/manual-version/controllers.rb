@@ -13,8 +13,3 @@ class Photos < E
   
   quick_filter :gamma, cmp: :like
 end
-
-class Tags < E
-  include Rear
-  model 'Tag'
-end

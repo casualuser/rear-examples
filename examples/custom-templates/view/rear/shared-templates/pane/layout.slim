@@ -1,100 +1,64 @@
-- selected = params[:selected].to_i
-- assoc_jsvar = 'assoc_callback_%s' % self.__id__
+== html_filters
+== @pager
 
-- if post? || delete?
-  javascript:
-    var #{assoc_jsvar} = assocs['#{__assoc_key__(post? ? :create : :delete)}'];
-- else
-  - assoc_jsvar = nil
+- quick_filters.each_pair do |column,filters|
+  .btn-group
+    - filters.each_key do |label|
+      - active = quick_filter?(column) == label
+      - if active
+        - params = Hash[opted_quick_filters.reject {|c,f| c == column}]
+      - else
+        - params = opted_quick_filters.merge(column => label)
+      a.btn.btn-small href=route(quick_filters: params) class=('active' if active)
+        = label
+      
+table.table
+  thead
+    th
+    - pane_columns.each do |column|
+      th class=('hoverable-active' if order_params[column.string_name])
+        - if vector = sortable_column?(column)
+          - url = route(pager_params(0).merge(order: {column.string_name => vector.first}))
+          i class=('icon-arrow-%s' % vector.last)
+        - else
+          - url = "javascript:void(null);"
+        a href=url = column.label
 
-div id=('pane-container-%s' % __dom_id__)
-  == html_filters unless delete? || put?
-  == pager
+    th
+      .pull-right
+        a href=route(:edit, 0)
+          .label.label-warning
+            i.icon-plus
   
-  - if get?
-    - quick_filters.each_pair do |column,filters|
-      .btn-group
-        - filters.each_key do |label|
-          - active = quick_filter?(column) == label
-          - if active
-            - params = Hash[pager_quick_filters.reject {|c,f| c == column}]
-          - else
-            - params = pager_quick_filters.merge(column => label)
-          a.btn.btn-small href=route(:quick_filters => params) class=('active' if active)
-            = label
-        
-  table.table
-    thead
-      th
+  - items.each do |item|
+    
+    - self.item, self.item_id = item, item[pkey]
+    tr.pane-item.hoverable
+      td
+        label.checkbox
+          input.pane-selected_item type='checkbox' value=item_id
+
       - pane_columns.each do |column|
+        - self.column = column
         - classes = []
-        - unless put?
-          - classes << 'hoverable-active' if order_params[column.string_name]
-        th class=classes style="white-space: nowrap;"
-          - if put?
-            = column.label
-          - else
-            - dir = ['asc', nil].include?(order_params[column.string_name]) ? 'desc' : 'asc'
-            - url = route(pager_params(0).merge(:order => {column.string_name => dir}))
-            - if order_params[column.string_name]
-              - if dir == 'asc'
-                i.icon-arrow-down
-              - else
-                i.icon-arrow-up
-            - if get?
-              a href=url = column.label
-            - else
-              - onclick = "Rear.switch_page('%s', '%s', '%s');" % [__dom_id__, url, rq.request_method]
-              a href="javascript:void(null);" onclick=onclick = column.label
-      th
-        - if get?
-          .pull-right
-            a href=route(:edit, 0)
-              span.badge.badge-warning
-                i.icon-plus
-                | &nbsp;New
+        - classes << 'hoverable-active' if order_params[column.string_name]
+        - classes << 'pane-pkey'        if column.name == pkey
+        td class=classes
+          a.pane-column_value href=route(:edit, item_id, pager_params)
+            == render_pane_column column
+          
+      td
+        .pull-right
+          a.label.label-info href=route(:edit, item_id.to_s, pager_params)
+            i.icon-edit.icon-white
 
-    - items.each do |item|
-      - self.item = item
-      - self.item_id = item[__rear__.pkey]
-      tr.pane-item.hoverable class=('info' if selected == item_id)
-        td
-          - if get?
-            input.pane-selected_item type='checkbox' value=item_id
-          - elsif assoc_jsvar
-            - dom_id = 'pane-%s-%s-%s_assoc' % [self.__id__, item_id, __assoc__]
-            div id=dom_id
-            javascript:
-              if(#{assoc_jsvar}){
-                $("<input>", {
-                  name:  #{assoc_jsvar}.column, value: #{item_id},
-                  type:  'checkbox', checked: #{delete? ? 'true' : 'false'},
-                  click: function() {#{assoc_jsvar}.callback('#{item_id}', '#{current_page}');}
-                }).appendTo("##{dom_id}");
-              }
-
-        - pane_columns.each do |column|
-          - self.column = column
-          - classes = []
-          - unless put?
-            - classes << 'hoverable-active' if order_params[column.string_name]
-          - if column.name == pkey
-            - classes << 'pane-pkey'
-          td class=classes
-            a.pane-column_value href=route(:edit, item_id, pager_params)
-              == render_pane_column column
-            
-        td
-          - if get?
-            .pull-right
-              a href=route(:edit, item_id.to_s, pager_params)
-                span.badge.badge-info
-                  i.icon-edit
-                  | &nbsp;Edit
-  
-  - if get?
+- if items.any?
+  - unless __rear__.readonly?
     a onclick="if(confirm('This action can not be undone! Continue?')) { new Rear.CRUD().delete_selected('#{self[:delete_selected]}', '#{{route(pager_params)}}', #{readonly? ? true : false}) } else { return false }" href="javascript:void(null);"
       span.badge.badge-important
         i.icon-remove
         | &nbsp;Delete Selected
 
+  - if @pager_context[:total_items] > __rear__.ipp
+    b.pull-right
+      = '%s - %s of %s' % @pager_context[:counter]

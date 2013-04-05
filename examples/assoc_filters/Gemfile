@@ -1,0 +1,15 @@
+source 'https://rubygems.org'
+
+if %x[hostname].strip == 'slivu'
+  gems_root = File.expand_path('../../../../..', __FILE__)
+  gem 'e',    path: gems_root + '/espresso'
+  gem 'rear', path: gems_root + '/rear/rear'
+else
+  gem 'rear'
+end
+
+gem 'data_mapper'
+gem 'dm-mysql-adapter'
+gem 'activerecord', require: 'active_record'
+gem 'mysql'
+gem 'thin'

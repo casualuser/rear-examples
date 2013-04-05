@@ -1,5 +1,4 @@
 javascript:
-  var assocs = {};
   var crudifier = new Rear.CRUD(#{item_id}, '#{self[:crud]}', '#{self[:edit]}', #{readonly? ? true : false});
 
 - if readonly?
@@ -9,15 +8,6 @@ javascript:
     });
 
 .row-fluid
-  .span4
-    #editor-navigation.hide_under_940px
-    javascript:
-      $(function(){
-        $.ajax({type: 'PUT',
-          url: '#{{route pager_params.merge(:selected => item_id.to_s)}}'
-        }).done(function(response){ $('#editor-navigation').html(response) });
-      });
-
   .span8
 
     form.form-horizontal#editor-main_form
@@ -26,9 +16,9 @@ javascript:
           a href="#editor-tabs-generic" data-toggle="tab"
             i.icon-edit
             | &nbsp;
-            = [__rear__.label, 'Edit', item_id].join(' | ')
+            = __rear__.label || __rear__.default_label
         
-        - belongs_to_assocs.each_key do |a|
+        - assocs(:belongs_to).each_key do |a|
           li
             a href="#editor-tabs-#{a}" data-toggle="tab"
               i.icon-tags
@@ -36,7 +26,7 @@ javascript:
               = a
       
         - if item_id > 0
-          - has_any_assocs.each_key do |a|
+          - assocs(:has_one, :has_many).each_key do |a|
             li
               a href="#editor-tabs-#{a}" data-toggle="tab"
                 i.icon-tags
@@ -90,8 +80,10 @@ javascript:
                 .editor-column_value
                   == render_editor_column column
 
-        == render_belongs_to_assocs
-        == render_has_any_assocs if item_id > 0
+        == reander_p 'editor/assocs', assoc_type: :belongs_to
+        - if item_id > 0
+          - [:has_one, :has_many].each do |type|
+            == reander_p 'editor/assocs', assoc_type: type
         
     hr
     .row-fluid
@@ -100,3 +92,12 @@ javascript:
           i.icon-check
           | &nbsp;Save
   
+  .span4
+    #editor-navigation.hide_under_940px
+    javascript:
+      $(function(){
+        $.ajax({
+          type: 'GET',
+          url: '#{{route :quickview, pager_params.merge(selected: item_id.to_s)}}'
+        }).done(function(response){ $('#editor-navigation').html(response) });
+      });

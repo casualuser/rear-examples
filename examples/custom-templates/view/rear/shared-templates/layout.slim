@@ -1,7 +1,7 @@
 doctype html
 html
   head
-    title = 'Rear / %s' % self.class.label
+    title = 'Rear / %s' % (__rear__.label || __rear__.default_label)
     meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
     meta name="viewport" content="width=device-width, initial-scale=1.0"
     - assets_mapper route(:assets), suffix: '-rear' do
@@ -35,7 +35,7 @@ html
     .container
       .row
         .span12
-          .navbar.navbar-fixed-top.navbar-inverse
+          .navbar.navbar-fixed-top
             .navbar-inner
               .container
                 
@@ -71,5 +71,4 @@ html
                       li.divider-vertical 
 
           .content
-            hr
             == yield
