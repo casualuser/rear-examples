@@ -1,6 +1,6 @@
 require './boot'
 
-EspressoApp.new do
+E.new do
   use Rack::ShowExceptions
   mount Rear.controllers do
     rear_templates 'view/rear'

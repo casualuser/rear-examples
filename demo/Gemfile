@@ -3,9 +3,12 @@ source 'http://rubygems.org'
 if %x[hostname].strip == 'slivu'
   gems_root = File.expand_path('../../../..', __FILE__)
   gem 'e',    path: gems_root + '/espresso'
+  gem 'e-periphery', path: gems_root + '/e-periphery'
+  gem 'rear-ace', path: gems_root + '/rear/rear-ace'
   gem 'rear', path: gems_root + '/rear/rear'
 else
   gem 'rear'
+  gem 'rear-ace'
 end
 
 gem 'thin'

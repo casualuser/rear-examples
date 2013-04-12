@@ -1,6 +1,6 @@
 require './boot'
 
-EspressoApp.new do
+E.new do
   
   mount Rear.controllers, '/admin'
   mount Admin

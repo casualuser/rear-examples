@@ -82,13 +82,13 @@ class Article < ActiveRecord::Base
   assoc_filter :categories
 
   input :Categories, editor: false do
-    pane_value { p([item.id, item.categories]); item.categories.map {|c| c[:name]}*', ' }
+    pane_value { item.categories.map {|c| c[:name]}*', ' }
   end
 
   # display 20 articles per page
   items_per_page 20
 
-  has_and_belongs_to_many :categories, :join_table => :article_categories
+  has_and_belongs_to_many :categories, join_table: :article_categories
 end
 
 class Category < ActiveRecord::Base
