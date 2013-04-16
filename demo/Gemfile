@@ -5,10 +5,12 @@ if %x[hostname].strip == 'slivu'
   gem 'e',    path: gems_root + '/espresso'
   gem 'e-periphery', path: gems_root + '/e-periphery'
   gem 'rear-ace', path: gems_root + '/rear/rear-ace'
+  gem 'rear-ckeditor', path: gems_root + '/rear/rear-ckeditor'
   gem 'rear', path: gems_root + '/rear/rear'
 else
   gem 'rear'
   gem 'rear-ace'
+  gem 'rear-ckeditor'
 end
 
 gem 'thin'
