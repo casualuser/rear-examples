@@ -12,4 +12,13 @@ class FileManager < E
   fm_editor :ace
 end
 
-Rear.run server: :Thin, port: 2424
+E.new do
+  mount Rear.controllers do
+    # when using `rear_templates`, Rear will search for templates
+    # in given path and fallback to default ones if none found.
+    # so creating views/rear/shared-templates/home.slim file
+    # to have a custom template for home page
+    rear_templates 'views/rear'
+  end
+  run server: :Thin, port: 2424
+end

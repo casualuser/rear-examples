@@ -1,0 +1,15 @@
+- assets_mapper 'http://espresso.github.io/javascripts/google-code-prettify/' do
+  == css_tag 'prettify'
+  == js_tag  'prettify'
+
+.container
+  .row
+    .span12
+      h4 Code used to generate this demo
+      pre.prettyprint.lang-ruby
+        = File.read File.expand_path('../../../../models.rb', __FILE__)
+
+javascript:
+  $(function() {
+    prettyPrint();
+  });
