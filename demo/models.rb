@@ -87,7 +87,7 @@ class Article < ActiveRecord::Base
     # search articles by name
     filter :name
 
-    # search articles by category
+    # search articles by category - associative filter
     assoc_filter :categories
 
     # adding a decorative column that will display article categories.
@@ -135,8 +135,11 @@ class City < ActiveRecord::Base
     # this is achieved by setting :readonly option to true
     input :url, readonly: true
 
-    # search cities by name
+    # filter cities by name
     filter :name
+
+    # filter cities by state - associative filter
+    assoc_filter :state
   end
 
 end
@@ -269,6 +272,25 @@ class Task < ActiveRecord::Base
     # Hash  are used when keys stored in db differs from rendered labels.
     input :priority, :radio do
       options 0 => 'Low', 5 => 'Medium', 10 => 'High', 15 => 'Critical'
+    end
+
+    # filtering tasks by workers
+    # there are a lot of workers and we do not want to display them all in a single dropdown,
+    # so adding a decorative filter that will allow to narrow down workers list by first letter.
+    decorative_filter :WorkersFirstLetter, :select do
+      options ('A'..'Z').to_a
+    end
+
+    # adding an associative filter that will display a list of workers.
+    # it works perfect without a block, but we need to narrow down workers list by first letter.
+    assoc_filter :worker do
+      if letter = filter?(:WorkersFirstLetter)
+        # unlike common filters, associative filters always expecting a Hash
+        workers = Worker.all(conditions: ['name LIKE ?', letter + '%'])
+        Hash[workers.map {|w| [w.id, w.name]}]
+      else
+        {'' => 'Please select WorkersFirstLetter'}
+      end
     end
   end
   
