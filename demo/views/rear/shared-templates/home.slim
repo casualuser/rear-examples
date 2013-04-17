@@ -2,12 +2,14 @@
   == css_tag 'prettify'
   == js_tag  'prettify'
 
+- root = File.expand_path('../../../..', __FILE__) + '/'
+- baseurl = 'https://github.com/espresso/rear-examples/blob/master/demo/'
 .container
   .row
     .span12
-      h4 Code used to generate this demo
-      - root = File.expand_path('../../../..', __FILE__) + '/'
-      - baseurl = 'https://github.com/espresso/rear-examples/blob/master/demo/'
+      h4
+        | Code used to generate this demo &nbsp;
+        a href=baseurl target="_blank" (see it on GitHub)
       - %w[models.rb app.rb].each do |file|
         p
           .well.well-small
