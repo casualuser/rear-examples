@@ -1,7 +1,7 @@
 class Article
   include DataMapper::Resource
   include Rear
-  input :content, :rte, public_path: File.expand_path('../../../assets/files', __FILE__)
+  input :content, :ckeditor, public_path: File.expand_path('../../../assets/files', __FILE__)
   assoc_columns :name
 
   property :id,      Serial

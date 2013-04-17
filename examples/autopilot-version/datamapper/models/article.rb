@@ -2,7 +2,7 @@ class Article
   include DataMapper::Resource
   include Rear
   under :HasAndBelongsToMany
-  input :content, :rte
+  input :content, :ckeditor
   assoc_columns :name
 
   property :id,      Serial

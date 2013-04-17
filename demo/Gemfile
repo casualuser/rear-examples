@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-if %x[hostname].strip == 'slivu'
+if ENV['REAR_ENV'] == 'dev'
   gems_root = File.expand_path('../../../..', __FILE__)
   gem 'e',    path: gems_root + '/espresso'
   gem 'e-periphery', path: gems_root + '/e-periphery'

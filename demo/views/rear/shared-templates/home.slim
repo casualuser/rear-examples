@@ -6,10 +6,20 @@
   .row
     .span12
       h4 Code used to generate this demo
-      pre.prettyprint.lang-ruby
-        = File.read File.expand_path('../../../../models.rb', __FILE__)
+      - root = File.expand_path('../../../..', __FILE__) + '/'
+      - baseurl = 'https://github.com/espresso/rear-examples/blob/master/demo/'
+      - %w[models.rb app.rb].each do |file|
+        p
+          .well.well-small
+            a href=(baseurl + file) target="_blank"
+              = file
+          pre.prettyprint.lang-ruby
+            = File.read(root + file)
 
 javascript:
   $(function() {
     prettyPrint();
   });
+
+a href="https://github.com/espresso/rear"
+  img style="position: absolute; top: 0; left: 0; border: 0; z-index: 10000;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_green_007200.png"

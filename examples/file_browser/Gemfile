@@ -1,11 +1,13 @@
 source 'https://rubygems.org'
 
-if %x[hostname].strip == 'slivu'
+if ENV['REAR_ENV'] == 'dev'
   gems_root = File.expand_path('../../../../..', __FILE__)
   gem 'e',    path: gems_root + '/espresso'
   gem 'rear', path: gems_root + '/rear/rear'
+  gem 'rear-ckeditor', path: gems_root + '/rear/rear-ckeditor'
 else
   gem 'rear'
+  gem 'rear-ckeditor'
 end
 
 gem 'thin'

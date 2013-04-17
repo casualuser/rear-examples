@@ -20,5 +20,5 @@ E.new do
     # to have a custom template for home page
     rear_templates 'views/rear'
   end
-  run server: :Thin, port: 2424
+  run server: :Thin, port: 2525
 end
